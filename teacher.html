@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Teacher Dashboard · Week 13 Extra Practice</title>
+<script src="config.js?v=1"></script>
+<style>
+:root{--brand:#5b4bb7;--brand2:#3f3291;--ink:#1d1b2e;--mute:#6b6880;--line:#e4e2ee;--bg:#f4f3f9;--ok:#1e8a50;--bad:#c63a32;--gold:#f2c200}
+*{box-sizing:border-box}body{margin:0;font-family:"Segoe UI",Calibri,Arial,sans-serif;background:var(--bg);color:var(--ink)}
+header{background:var(--brand);color:#fff;border-bottom:4px solid var(--gold)}
+header .in{max-width:1200px;margin:0 auto;padding:16px 18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+header h1{margin:0;font-size:20px;flex:1}header small{opacity:.85;display:block;font-weight:400;font-size:13px}
+header button,header a{background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.35);border-radius:8px;padding:8px 14px;font-size:14px;cursor:pointer;text-decoration:none}
+main{max-width:1200px;margin:0 auto;padding:18px}
+.login{max-width:360px;margin:80px auto;background:#fff;border-radius:16px;padding:28px;box-shadow:0 6px 30px rgba(0,0,0,.08);text-align:center}
+.login input{width:100%;padding:12px;font-size:16px;border:2px solid var(--line);border-radius:10px;margin:14px 0;text-align:center}
+.login button{width:100%;padding:12px;background:var(--brand);color:#fff;border:0;border-radius:10px;font-size:16px;font-weight:700;cursor:pointer}
+.err{color:var(--bad);font-size:14px;min-height:18px}
+.filters{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:16px}
+.filters select,.filters input{padding:9px 12px;border:1px solid var(--line);border-radius:8px;font-size:14px;background:#fff}
+.filters label{font-size:14px;color:var(--mute);display:flex;align-items:center;gap:6px}
+.seg{display:flex;background:#fff;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.seg button{border:0;background:none;padding:9px 14px;font-size:14px;cursor:pointer;color:var(--ink)}
+.seg button.on{background:var(--brand);color:#fff}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:16px}
+.tile{background:#fff;border-radius:12px;padding:14px 16px;border:1px solid var(--line)}
+.tile .k{font-size:13px;color:var(--mute)}.tile .v{font-size:28px;font-weight:800;margin-top:4px}.tile .s{font-size:12px;color:var(--mute)}
+.grid2{display:grid;grid-template-columns:1.35fr 1fr;gap:16px}@media(max-width:900px){.grid2{grid-template-columns:1fr}}
+.card{background:#fff;border-radius:12px;border:1px solid var(--line);padding:14px 16px;overflow:auto}
+.card h2{font-size:16px;margin:0 0 10px;color:var(--brand2)}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th{text-align:left;color:var(--mute);font-weight:600;border-bottom:2px solid var(--line);padding:8px 6px;cursor:pointer;white-space:nowrap;position:sticky;top:0;background:#fff}
+td{border-bottom:1px solid var(--line);padding:8px 6px}
+tr.row{cursor:pointer}tr.row:hover td{background:#f7f5ff}
+.pct{display:inline-block;min-width:48px;font-weight:700}
+.pill{display:inline-block;padding:2px 8px;border-radius:12px;font-size:12px;font-weight:700}
+.p-hi{background:#e3f5ea;color:var(--ok)}.p-mid{background:#fff4d6;color:#8a6300}.p-lo{background:#fde6e4;color:var(--bad)}
+.qa{display:grid;grid-template-columns:minmax(120px,1.1fr) 2fr 44px;gap:6px 10px;align-items:center;font-size:13px}
+.qa .bar{height:14px;background:#eeedf5;border-radius:4px;position:relative}
+.qa .bar i{position:absolute;left:0;top:0;bottom:0;background:var(--brand);border-radius:0 4px 4px 0}
+.qa .lab{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.qa .val{text-align:right;font-weight:700}
+.muted{color:var(--mute);font-size:13px}
+.drawer{position:fixed;inset:0;background:rgba(20,18,40,.45);display:none;justify-content:flex-end;z-index:30}
+.drawer.show{display:flex}
+.drawer .panel{width:min(560px,100%);background:#fff;height:100%;overflow:auto;padding:20px}
+.drawer h3{margin:0;color:var(--brand2)}
+.ans td{padding:6px}.ok{color:var(--ok);font-weight:700}.no{color:var(--bad);font-weight:700}
+.btn2{background:var(--brand);color:#fff;border:0;border-radius:8px;padding:9px 14px;font-size:14px;cursor:pointer}
+.empty{padding:30px;text-align:center;color:var(--mute)}
+</style></head><body>
+<header><div class="in"><h1>Teacher Dashboard <small>Week 13 Extra Practice · Middle East International – Wurud · Math Department</small></h1>
+<span id="hdrBtns" style="display:none;gap:8px;display:none"><button id="refresh">⟳ Refresh</button> <a id="sheetLink" target="_blank" rel="noopener">Open Google Sheet</a> <button id="logout">Log out</button></span></div></header>
+<main>
+<div class="login" id="login"><h2 style="margin:0;color:var(--brand)">🔒 Teacher access</h2><p class="muted">Enter the teacher PIN to see student submissions.</p>
+<input id="pin" type="password" placeholder="PIN" autocomplete="current-password"><button id="go">Open dashboard</button><p class="err" id="err"></p></div>
+<div id="app" style="display:none">
+<div class="filters">
+  <div class="seg" id="sheetSeg"></div>
+  <select id="section"><option value="">All sections</option></select>
+  <input id="search" placeholder="Search student…">
+  <label><input type="checkbox" id="latest" checked> Latest attempt per student</label>
+  <button class="btn2" id="csv">⬇ Export CSV</button>
+</div>
+<div class="tiles" id="tiles"></div>
+<div class="grid2">
+  <div class="card"><h2>Students</h2><div id="tableWrap"></div></div>
+  <div class="card"><h2>Question analysis <span class="muted">— % of students correct</span></h2><div id="qa"></div></div>
+</div>
+<p class="muted" style="margin-top:14px" id="updated"></p>
+</div>
+</main>
+<div class="drawer" id="drawer"><div class="panel" id="panel"></div></div>
+<script>
+var DATA=null,cur='g4_longdiv',sortKey='time',sortDir=-1;
+var ORDER=[['g4_longdiv','G4 · Long Division'],['g4_remainders','G4 · 5.4 Remainders'],['g5_decimals','G5 · Multiply Decimals']];
+function ss(k,v){try{if(v===undefined)return sessionStorage.getItem(k);if(v===null)sessionStorage.removeItem(k);else sessionStorage.setItem(k,v)}catch(e){return null}}
+function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+function load(pin){
+  document.getElementById('err').textContent='Loading…';
+  return fetch(window.API_URL+'?pin='+encodeURIComponent(pin)).then(function(r){return r.json()}).then(function(d){
+    if(!d.ok)throw new Error(d.error||'Error');
+    DATA=d;ss('tpin',pin);
+    document.getElementById('login').style.display='none';document.getElementById('app').style.display='block';
+    document.getElementById('hdrBtns').style.display='flex';
+    document.getElementById('updated').textContent='Last updated: '+new Date().toLocaleString();
+    render();
+  }).catch(function(e){ss('tpin',null);document.getElementById('login').style.display='block';document.getElementById('app').style.display='none';document.getElementById('err').textContent=e.message==='Wrong PIN'?'Wrong PIN — try again.':'Could not load data: '+e.message;});
+}
+document.getElementById('go').onclick=function(){load(document.getElementById('pin').value.trim())};
+document.getElementById('pin').onkeydown=function(e){if(e.key==='Enter')document.getElementById('go').click()};
+document.getElementById('refresh').onclick=function(){load(ss('tpin'))};
+document.getElementById('logout').onclick=function(){ss('tpin',null);location.reload()};
+document.getElementById('sheetLink').href=window.SHEET_URL||'#';
+['section','search','latest'].forEach(function(id){document.getElementById(id).addEventListener('input',render)});
+var seg=document.getElementById('sheetSeg');
+ORDER.forEach(function(o){var b=document.createElement('button');b.textContent=o[1];b.dataset.k=o[0];b.onclick=function(){cur=o[0];document.getElementById('section').value='';render()};seg.appendChild(b)});
+
+function rowsFor(){
+  var s=DATA.sheets[cur],rows=s.rows.slice();
+  var sec=document.getElementById('section').value,q=document.getElementById('search').value.trim().toLowerCase();
+  if(document.getElementById('latest').checked){
+    var m={};rows.forEach(function(r){var k=String(r.name).trim().toLowerCase()+'|'+String(r.section).trim().toLowerCase();if(!m[k]||r.time>m[k].time)m[k]=r;});
+    var cnt={};rows.forEach(function(r){var k=String(r.name).trim().toLowerCase()+'|'+String(r.section).trim().toLowerCase();cnt[k]=(cnt[k]||0)+1});
+    rows=Object.keys(m).map(function(k){var r=Object.assign({},m[k]);r.attempts=cnt[k];return r});
+  }
+  if(sec)rows=rows.filter(function(r){return String(r.section).trim().toLowerCase()===sec});
+  if(q)rows=rows.filter(function(r){return String(r.name).toLowerCase().indexOf(q)>=0});
+  return rows;
+}
+function pctOf(r){return r.total?r.score/r.total:0}
+function pill(p){var c=p>=.8?'p-hi':p>=.5?'p-mid':'p-lo';return '<span class="pill '+c+'">'+Math.round(p*100)+'%</span>'}
+function render(){
+  if(!DATA)return;var s=DATA.sheets[cur];
+  seg.querySelectorAll('button').forEach(function(b){b.classList.toggle('on',b.dataset.k===cur)});
+  var secSel=document.getElementById('section'),keep=secSel.value,secs={};
+  s.rows.forEach(function(r){var v=String(r.section).trim();if(v)secs[v.toLowerCase()]=v});
+  secSel.innerHTML='<option value="">All sections</option>'+Object.keys(secs).sort().map(function(k){return '<option value="'+esc(k)+'">'+esc(secs[k])+'</option>'}).join('');secSel.value=keep;
+  var rows=rowsFor();
+  var n=rows.length,avg=n?rows.reduce(function(a,r){return a+pctOf(r)},0)/n:0;
+  var hi=n?Math.max.apply(null,rows.map(pctOf)):0,lo=n?Math.min.apply(null,rows.map(pctOf)):0;
+  var mastered=rows.filter(function(r){return pctOf(r)>=.8}).length;
+  document.getElementById('tiles').innerHTML=
+   tile('Submissions',n,s.grade+' · '+s.title)+tile('Class average',n?Math.round(avg*100)+'%':'—',n?'mean score':'no data yet')+
+   tile('Highest / Lowest',n?Math.round(hi*100)+'% / '+Math.round(lo*100)+'%':'—','')+tile('Scored 80%+',n?mastered+' of '+n:'—','students')+tile('Questions',s.items.length,'answer boxes graded');
+  rows.sort(function(a,b){var x,y;if(sortKey==='pct'){x=pctOf(a);y=pctOf(b)}else{x=a[sortKey];y=b[sortKey];x=String(x).toLowerCase();y=String(y).toLowerCase()}return x<y?-sortDir:x>y?sortDir:0});
+  var tw=document.getElementById('tableWrap');
+  if(!n){tw.innerHTML='<div class="empty">No submissions yet for this sheet.</div>'}else{
+  tw.innerHTML='<table><thead><tr><th data-k="name">Student</th><th data-k="section">Section</th><th data-k="pct">Score</th><th data-k="time">Submitted</th></tr></thead><tbody>'+
+   rows.map(function(r,i){return '<tr class="row" data-i="'+i+'"><td>'+esc(r.name)+(r.attempts>1?' <span class="muted">('+r.attempts+' tries)</span>':'')+'</td><td>'+esc(r.section)+'</td><td><span class="pct">'+r.score+'/'+r.total+'</span> '+pill(pctOf(r))+'</td><td class="muted">'+new Date(r.time).toLocaleString([], {dateStyle:'short',timeStyle:'short'})+'</td></tr>'}).join('')+'</tbody></table>';
+  tw.querySelectorAll('th').forEach(function(th){th.onclick=function(){var k=th.dataset.k;if(sortKey===k)sortDir=-sortDir;else{sortKey=k;sortDir=k==='name'||k==='section'?1:-1}render()}});
+  tw.querySelectorAll('tr.row').forEach(function(tr){tr.onclick=function(){detail(rows[+tr.dataset.i])}});}
+  var qa=document.getElementById('qa');
+  if(!n){qa.innerHTML='<div class="empty">Waiting for submissions.</div>'}else{
+  qa.innerHTML='<div class="qa">'+s.items.map(function(it,j){var c=rows.filter(function(r){return r.marks[j]}).length,p=c/n;
+   return '<div class="lab" title="'+esc(it.label)+'">'+esc(it.label)+'</div><div class="bar" title="'+esc(it.label)+': '+c+' of '+n+' correct ('+Math.round(p*100)+'%) · key: '+esc(it.key)+'"><i style="width:'+(p*100)+'%"></i></div><div class="val">'+Math.round(p*100)+'%</div>'}).join('')+'</div><p class="muted">Hover a bar for counts and the answer key.</p>';}
+}
+function tile(k,v,s){return '<div class="tile"><div class="k">'+k+'</div><div class="v">'+v+'</div><div class="s">'+esc(s)+'</div></div>'}
+function detail(r){
+  var s=DATA.sheets[cur];
+  document.getElementById('panel').innerHTML='<div style="display:flex;justify-content:space-between;align-items:center"><h3>'+esc(r.name)+'</h3><button class="btn2" onclick="document.getElementById(\'drawer\').classList.remove(\'show\')">Close</button></div>'+
+  '<p class="muted">'+esc(s.title)+' · Section '+esc(r.section||'—')+' · '+new Date(r.time).toLocaleString()+'</p><p><b style="font-size:22px">'+r.score+' / '+r.total+'</b> '+pill(pctOf(r))+'</p>'+
+  '<table class="ans"><thead><tr><th>Question</th><th>Student answer</th><th>Key</th><th></th></tr></thead><tbody>'+
+  s.items.map(function(it,j){return '<tr><td>'+esc(it.label)+'</td><td>'+(r.answers[j]?esc(r.answers[j]):'<span class="muted">(blank)</span>')+'</td><td class="muted">'+esc(it.key)+'</td><td class="'+(r.marks[j]?'ok':'no')+'">'+(r.marks[j]?'✓':'✗')+'</td></tr>'}).join('')+'</tbody></table>';
+  document.getElementById('drawer').classList.add('show');
+}
+document.getElementById('drawer').onclick=function(e){if(e.target.id==='drawer')this.classList.remove('show')};
+document.getElementById('csv').onclick=function(){
+  var s=DATA.sheets[cur],rows=rowsFor();
+  var head=['Student','Section','Score','Total','Percent','Submitted'].concat(s.items.map(function(i){return i.label}));
+  var lines=[head].concat(rows.map(function(r){return [r.name,r.section,r.score,r.total,Math.round(pctOf(r)*100)+'%',new Date(r.time).toLocaleString()].concat(r.answers.map(function(a,j){return a+(r.marks[j]?' ✓':' ✗')}))}));
+  var csv='﻿'+lines.map(function(l){return l.map(function(v){return '"'+String(v).replace(/"/g,'""')+'"'}).join(',')}).join('\n');
+  var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download=cur+'_results.csv';a.click();
+};
+if(ss('tpin'))load(ss('tpin'));
+</script></body></html>
